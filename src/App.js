@@ -20,11 +20,25 @@ const Search = ({ search, onSearch }) => (
     <input type="text" id="search" onChange={onSearch} value={search} />
   </div>
 );
+
+const useSemiPersistentState = (key, initialState) => {
+  const [value, setValue] = React.useState(
+    localStorage.getItem(key) || initialState
+  );
+
+  React.useEffect(() => {
+    localStorage.setItem(key, value);
+  }, [value, key]);
+
+  return [value, setValue];
+};
+
 const App = () => {
-  const [searchTerm, setSearchTerm] = React.useState("React");
+  const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
+    localStorage.setItem("search", event.target.value);
   };
   const stories = [
     {
