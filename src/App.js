@@ -1,31 +1,25 @@
 import "./App.css";
 import React from "react";
 
-const List = ({ list }) => {
-  {
-    return list.map(function (item) {
-      return (
-        <div key={item.objectID}>
-          <span>
-            <a href={item.url}>{item.title}</a>
-          </span>
-          <span>{item.author}</span>
-          <span>{item.num_comments}</span>
-          <span>{item.points}</span>
-        </div>
-      );
-    });
-  }
-};
+const List = ({ list }) =>
+  list.map((item) => <Item key={item.objectID} item={item} />);
+const Item = ({ item: { title, url, author, num_comments, points } }) => (
+  <div>
+    <span>
+      <a href={url}>{title}</a>
+    </span>
+    <span>{author}</span>
+    <span>{num_comments}</span>
+    <span>{points}</span>
+  </div>
+);
 
-const Search = ({ search, onSearch }) => {
-  return (
-    <div>
-      <label htmlFor="search">Search:</label>
-      <input type="text" id="search" onChange={onSearch} value={search} />
-    </div>
-  );
-};
+const Search = ({ search, onSearch }) => (
+  <div>
+    <label htmlFor="search">Search:</label>
+    <input type="text" id="search" onChange={onSearch} value={search} />
+  </div>
+);
 const App = () => {
   const [searchTerm, setSearchTerm] = React.useState("React");
 
