@@ -14,11 +14,18 @@ const Item = ({ item }) => (
   </div>
 );
 
-const Search = ({ search, onSearch }) => (
-  <div>
-    <label htmlFor="search">Search:</label>
-    <input type="text" id="search" onChange={onSearch} value={search} />
-  </div>
+const InputWithLabel = ({ id, label, value, onInputChange, type = "text" }) => (
+  <>
+    <label htmlFor={id}>{label}</label>
+    &nbsp;
+    <input
+      type="text"
+      id={id}
+      onChange={onInputChange}
+      value={value}
+      type={type}
+    />
+  </>
 );
 
 const useSemiPersistentState = (key, initialState) => {
@@ -66,7 +73,12 @@ const App = () => {
   return (
     <div className="App">
       <h1>My Hacker Stories</h1>
-      <Search search={searchTerm} onSearch={handleSearch} />
+      <InputWithLabel
+        id="search"
+        label="Search"
+        value={searchTerm}
+        onInputChange={handleSearch}
+      />
       <hr />
 
       <List list={searchedStories} />
