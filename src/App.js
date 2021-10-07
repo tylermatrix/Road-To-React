@@ -16,24 +16,36 @@ const Item = ({ item }) => (
 
 const InputWithLabel = ({
   id,
-  label,
   value,
   onInputChange,
+  isFocused,
   type = "text",
   children,
-}) => (
-  <>
-    <label htmlFor={id}>{children}</label>
-    &nbsp;
-    <input
-      type="text"
-      id={id}
-      onChange={onInputChange}
-      value={value}
-      type={type}
-    />
-  </>
-);
+}) => {
+  const inputRef = React.useRef();
+
+  React.useEffect(() => {
+    if (isFocused && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isFocused]);
+
+  return (
+    <>
+      <label htmlFor={id}>{children}</label>
+      &nbsp;
+      <input
+        type="text"
+        id={id}
+        ref={inputRef}
+        onChange={onInputChange}
+        value={value}
+        type={type}
+        autoFocus={isFocused}
+      />
+    </>
+  );
+};
 
 const useSemiPersistentState = (key, initialState) => {
   const [value, setValue] = React.useState(
@@ -85,6 +97,7 @@ const App = () => {
         label="Search"
         value={searchTerm}
         onInputChange={handleSearch}
+        isFocused
       >
         <strong>Search: </strong>
       </InputWithLabel>
