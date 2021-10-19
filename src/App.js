@@ -5,21 +5,27 @@ const List = ({ list, onRemoveItem }) =>
   list.map((item) => (
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
   ));
-const Item = ({ item, onRemoveItem }) => (
-  <div>
-    <span>
-      <a href={item.url}>{item.title}</a>
-    </span>
-    <span>{item.author}</span>
-    <span>{item.num_comments}</span>
-    <span>{item.points}</span>
-    <span>
-      <button type="button" onClick={() => onRemoveItem(item)}>
-        Dismiss
-      </button>
-    </span>
-  </div>
-);
+const Item = ({ item, onRemoveItem }) => {
+  onRemoveItem = () => {
+    onRemoveItem(item);
+  };
+  return (
+    <div>
+      <span>
+        <a href={item.url}>{item.title}</a>
+      </span>
+      <span>{item.author}</span>
+      <span>{item.num_comments}</span>
+      <span>{item.points}</span>
+      <span>
+        <button type="button" onClick={() => onRemoveItem(item)}>
+          Dismiss
+        </button>
+      </span>
+    </div>
+  );
+};
+g;
 
 const initialStories = [
   {
@@ -39,6 +45,12 @@ const initialStories = [
     objectID: 1,
   },
 ];
+
+const getAsyncStories = () =>
+  new Promise((resolve) =>
+    setTimeout(() => resolve({ data: { stories: initialStories } }), 2000)
+  );
+
 const InputWithLabel = ({
   id,
   value,
@@ -86,7 +98,13 @@ const useSemiPersistentState = (key, initialState) => {
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
-  const [stories, setStories] = React.useState(initialStories);
+  const [stories, setStories] = React.useState([]);
+
+  React.useEffect(() => {
+    getAsyncStories().then((result) => {
+      setStories(result.data.storiess);
+    });
+  });
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
