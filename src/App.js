@@ -1,5 +1,6 @@
 import "./App.css";
 import React, { useReact } from "react";
+import react from "react";
 
 const storiesReducer = (state, action) => {
   switch (action.type) {
@@ -138,11 +139,19 @@ const App = () => {
     isLoading: false,
     isError: false,
   });
+  const [url, setUrl] = React.useState(`${API_ENDPOINT}${searchterm}`);
+
+  const handleSearchInput = (event) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const handleSearchSubmit = () => {
+    setUrl(`${API_ENDPOINT}${searchTerm}`);
+  };
 
   const handleFetchStories = React.useCallback(() => {
-    if (!searchTerm) return;
     dispatchStories({ type: "STORIES_FETCH_INIT" });
-    fetch(`${API_ENDPOINT}${searchTerm}`)
+    fetch(url)
       .then((response) => response.json())
       .then((result) => {
         dispatchStories({
@@ -151,7 +160,7 @@ const App = () => {
         });
       })
       .catch(() => dispatchStories({ type: "STORIES_FETCH_FAILURE" }));
-  }, [searchTerm]);
+  }, [url]);
 
   React.useEffect(() => {
     handleFetchStories();
@@ -180,11 +189,14 @@ const App = () => {
         id="search"
         label="Search"
         value={searchTerm}
-        onInputChange={handleSearch}
+        onInputChange={handleSearchInput}
         isFocused
       >
         <strong>Search: </strong>
       </InputWithLabel>
+      <button type="button" disabled={!searchTerm} onClick={handleSearchSubmit}>
+        Submit
+      </button>
       <hr />
       {stories.isError && <p>Something went wrong...</p>}
       {stories.isLoading ? (
