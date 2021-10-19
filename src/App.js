@@ -1,6 +1,15 @@
 import "./App.css";
 import React, { useReact } from "react";
 
+const storiesReducer = (state, action) => {
+  switch (action.type) {
+    case "SET_STORIES":
+      return action.payload;
+    case "REMOVE_STORY":
+      return state.filter((story) => action.payload !== story.objectID);
+  }
+};
+
 const List = ({ list, onRemoveItem }) =>
   list.map((item) => (
     <Item key={item.objectID} item={item} onRemoveItem={onRemoveItem} />
@@ -98,7 +107,7 @@ const useSemiPersistentState = (key, initialState) => {
 
 const App = () => {
   const [searchTerm, setSearchTerm] = useSemiPersistentState("search", "React");
-  const [stories, setStories] = React.useState([]);
+  const [stories, dispatchStories] = React.useReducer(storiesReducer, []);
   const [isLoading, setIsLoading] = React.useState(false);
   const [isError, setIsError] = React.useState(false);
 
@@ -106,7 +115,10 @@ const App = () => {
     setIsLoading(true);
     getAsyncStories()
       .then((result) => {
-        setStories(result.data.storiess);
+        dispatchStories({
+          type: "SET_STORIES",
+          payload: result.data.stories,
+        });
         setIsLoading(false);
       })
       .catch(() => setIsError(true));
@@ -118,10 +130,10 @@ const App = () => {
   };
 
   const handleRemoveStory = (item) => {
-    const newStories = stories.filter(
-      (story) => item.objectID !== story.objectID
-    );
-    setStories(newStories);
+    dispatchStories({
+      type: "SET_STORIES",
+      payload: item,
+    });
   };
 
   const searchedStories = stories.filter((story) => {
